@@ -1,0 +1,11 @@
+[package]
+name = "coreutils"
+version = "0.1.0"
+authors = ["Gregory Meyer <gregjm@umich.edu>"]
+
+[dependencies]
+clap = "2.31"
+
+[lib]
+name = "coreutils"
+path = "src/lib.rs"
