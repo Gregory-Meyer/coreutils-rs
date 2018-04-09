@@ -19,10 +19,10 @@ impl File {
 }
 
 fn get_files() -> Vec<File> {
-    let args = clap::App::new("cat")
+    let args = clap::App::new("tac")
         .version("0.1.0")
         .author("Gregory Meyer <gregjm@umich.edu>")
-        .about("concatenate and write files")
+        .about("concatenate and write files in reverse")
         .arg(clap::Arg::with_name("file")
              .multiple(true))
         .get_matches();
@@ -50,7 +50,7 @@ fn print_files(files: &Vec<File>) {
                     }
                 };
 
-                match coreutils::print_readable(file) {
+                match coreutils::print_readable_reversed(file) {
                     Ok(_) => (),
                     Err(e) => {
                         eprintln!("error: {}", e.description());
@@ -58,7 +58,7 @@ fn print_files(files: &Vec<File>) {
                     }
                 }
             }
-            File::Stdin => match coreutils::print_stdin() {
+            File::Stdin => match coreutils::print_stdin_reversed() {
                 Ok(_) => (),
                 Err(e) => {
                     eprintln!("error: {}", e.description());

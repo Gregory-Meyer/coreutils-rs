@@ -1,23 +1,62 @@
 use std::io::{Read, Write};
 
-pub fn print_file<R: std::io::Read>(file: R) -> std::io::Result<usize> {
-    let mut buffer = String::new();
-    let mut reader = std::io::BufReader::new(file);
-
-    match reader.read_to_string(&mut buffer) {
-        Ok(_) => (),
-        Err(e) => return Err(e),
-    }
-
+fn print_buffer(buffer: String) -> std::io::Result<usize> {
     let stdout = std::io::stdout();
     let mut lock = stdout.lock();
-    
+
     lock.write(buffer.as_bytes())
+}
+
+fn reverse_buffer_lines(buffer: String) -> String {
+    let reversed: Vec<_> = buffer.rsplit_terminator('\n')
+        .chain([""].into_iter().cloned())
+        .collect();
+
+    reversed.join("\n")
+}
+
+fn read_to_buffer<R: std::io::Read>(readable: R) -> std::io::Result<String> {
+    let mut buffer = String::new();
+    let mut reader = std::io::BufReader::new(readable);
+
+    match reader.read_to_string(&mut buffer) {
+        Ok(_) => Ok(buffer),
+        Err(e) => Err(e),
+    }
+}
+
+pub fn print_readable<R: std::io::Read>(readable: R)
+-> std::io::Result<usize> {
+    let buffer = match read_to_buffer(readable) {
+        Ok(b) => b,
+        Err(e) => return Err(e),
+    };
+
+    print_buffer(buffer)
+}
+
+pub fn print_readable_reversed<R: std::io::Read>(readable: R)
+-> std::io::Result<usize> {
+    let buffer = match read_to_buffer(readable) {
+        Ok(b) => b,
+        Err(e) => return Err(e),
+    };
+
+    let reversed = reverse_buffer_lines(buffer);
+
+    print_buffer(reversed)
 }
 
 pub fn print_stdin() -> std::io::Result<usize> {
     let stdin = std::io::stdin();
     let lock = stdin.lock();
 
-    print_file(lock)
+    print_readable(lock)
+}
+
+pub fn print_stdin_reversed() -> std::io::Result<usize> {
+    let stdin = std::io::stdin();
+    let lock = stdin.lock();
+
+    print_readable_reversed(lock)
 }
