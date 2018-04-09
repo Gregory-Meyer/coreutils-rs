@@ -1,13 +1,13 @@
 use std::io::{Read, Write};
 
-fn print_buffer(buffer: String) -> std::io::Result<usize> {
+fn print_buffer(buffer: &str) -> std::io::Result<usize> {
     let stdout = std::io::stdout();
     let mut lock = stdout.lock();
 
     lock.write(buffer.as_bytes())
 }
 
-fn reverse_buffer_lines(buffer: String) -> String {
+fn reverse_buffer_lines(buffer: &str) -> String {
     let reversed: Vec<_> = buffer.rsplit_terminator('\n')
         .chain([""].into_iter().cloned())
         .collect();
@@ -32,7 +32,7 @@ pub fn print_readable<R: std::io::Read>(readable: R)
         Err(e) => return Err(e),
     };
 
-    print_buffer(buffer)
+    print_buffer(buffer.as_str())
 }
 
 pub fn print_readable_reversed<R: std::io::Read>(readable: R)
@@ -42,9 +42,9 @@ pub fn print_readable_reversed<R: std::io::Read>(readable: R)
         Err(e) => return Err(e),
     };
 
-    let reversed = reverse_buffer_lines(buffer);
+    let reversed = reverse_buffer_lines(buffer.as_str());
 
-    print_buffer(reversed)
+    print_buffer(reversed.as_str())
 }
 
 pub fn print_stdin() -> std::io::Result<usize> {
